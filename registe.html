@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/public.css">
+    <link rel="stylesheet" href="css/login.css">
+    <script type="text/javascript" src="js/Ajax.js"></script>
+    <style type="text/css">
+        #main {
+            width: 1200px;
+            height: auto;
+            margin: 0 auto;
+        }
+
+        #mainForm {
+            margin: 50px auto;
+            width: 300px;
+            min-height: 600px;
+        }
+
+        .registe1 {
+            padding-top: 40px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #111;
+        }
+
+        .registe2 {
+            padding-top: 40px;
+            color: #111;
+            font-size: 14px;
+            line-height: 2.4;
+        }
+
+        #mainForm p {
+            padding-bottom: 5px;
+            margin-top: 5px;
+            color: #999;
+            font-size: 12px;
+            position: relative;
+        }
+
+        #mainForm p span {
+            position: absolute;
+            left: 284px;
+            top: 25px;
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            /* border-radius: 50%;
+            border: 1px solid #000; */
+            text-align: center;
+            line-height: 15px;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        #mainForm input {
+            border: none;
+            outline: none;
+            border-bottom: 1px solid #999;
+            margin-bottom: 5px;
+            margin-top: 5px;
+            width: 300px;
+        }
+
+        #submit {
+            color: #fff;
+            background-color: #bebebe;
+            margin-top: 45px;
+            width: 300px;
+            height: 50px;
+            line-height: 50px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #content2 {
+            position: relative;
+        }
+
+        #content2 input {
+            border: none;
+            outline: none;
+            border-bottom: 1px solid #999;
+            margin-bottom: 5px;
+            margin-top: 5px;
+            width: 300px;
+
+        }
+
+        #mycanvas {
+            width: 80px;
+            height: 40px;
+            position: absolute;
+            left: 195px;
+            top: 1px;
+            font-weight: 500;
+            background: #f1f1f1;
+        }
+    </style>
+    <script type="text/javascript">
+        var value = "";
+        /**生成一个随机数**/
+        function randomNum(min, max) {
+            return Math.floor(Math.random() * (max - min) + min);
+        }
+        /**生成一个随机色**/
+        function randomColor(min, max) {
+            var r = randomNum(min, max);
+            var g = randomNum(min, max);
+            var b = randomNum(min, max);
+            return "rgb(" + r + "," + g + "," + b + ")";
+        }
+
+        function yzm() {
+            var _yzm = document.getElementById("mycanvas");
+            var width = _yzm.width;
+            var height = _yzm.height;
+            var ctx = _yzm.getContext('2d');
+            ctx.clearRect(0, 0, width, height);
+            ctx.textBaseline = 'bottom';
+            /**绘制文字**/
+            var str = 'ABCEFGHJKLMNPQRSTWXY123456789';
+            value = "";
+            for (var i = 0; i < 4; i++) {
+                var txt = str[randomNum(0, str.length)];
+                value += txt;
+                ctx.fillStyle = randomColor(50, 160); //随机生成字体颜色
+                ctx.font = randomNum(50, 80) + 'px SimHei'; //随机生成字体大小
+                var x = 10 + i * 45;
+                var y = randomNum(25, 35);
+                var deg = randomNum(-30, 30);
+                //修改坐标原点和旋转角度
+                ctx.translate(x, y);
+                ctx.rotate(deg * Math.PI / 180);
+                ctx.fillText(txt, 40, 60);
+                //恢复坐标原点和旋转角度
+                ctx.rotate(-deg * Math.PI / 180);
+                ctx.translate(-x, -y);
+            }
+            for (var i = 0; i < 4; i++) {
+                ctx.strokeStyle = randomColor(40, 180);
+                ctx.beginPath();
+                ctx.moveTo(randomNum(0, width), randomNum(0, height));
+                ctx.lineTo(randomNum(0, width), randomNum(0, height));
+                ctx.stroke();
+            }
+        }
+
+        function verify() {
+            this._title = document.getElementsByClassName("title");
+            this._input = document.getElementsByClassName("verify");
+            this.event = function () {
+                var _me = this;
+                for (let i = 0; i < this._input.length; i++) {
+                    this._input[i].onfocus = function () {
+                        this.onmouseover = null;
+                        this.onmouseout = null;
+                        _me._title[i].innerHTML = "";
+                    }
+                }
+                this._input[0].onblur = function () {
+                    var _names = /^[a-z]\w{8,24}/g;
+                    if (this.value === "") {
+                        _me._title[0].innerHTML = '×';
+                        _me._title[0].style.color = "red";
+                    } else if (_names.test(this.value) === false) {
+                        _me._title[0].innerHTML = '×';
+                        _me._title[0].style.color = "red";
+                    } else {
+                        _me._title[0].innerHTML = '√';
+                        _me._title[0].style.color = "green";
+                    }
+                }
+                this._input[1].onblur = function () {
+                    var inputCode = document.getElementById("yzm").value;
+                    if (inputCode.length <= 0) {
+                        _me._title[1].innerHTML = '×';
+                        _me._title[1].style.color = "red";
+                    } else if (inputCode.toUpperCase() !== value) {
+                        _me._title[1].innerHTML = '×';
+                        _me._title[1].style.color = "red";
+                        yzm();
+                    } else {
+                        _me._title[1].innerHTML = '√';
+                        _me._title[1].style.color = "green";
+                    }
+                }
+                this._input[2].onblur = function () {
+                    var _password = /^[a-z]\w{6,12}/g;
+                    if (this.value === "") {
+                        _me._title[2].innerHTML = '×';
+                        _me._title[2].style.color = "red";
+                    } else if (_password.test(this.value) === false) {
+                        _me._title[2].innerHTML = '×';
+                        _me._title[2].style.color = "red";
+                    } else {
+                        _me._title[2].innerHTML = '√';
+                        _me._title[2].style.color = "green";
+                    }
+                }
+                var _registe = document.getElementById("submit");
+                _registe.onclick = function () {
+                    _me._input[0].focus();
+                    _me._input[1].focus();
+                    _me._input[2].focus();
+                    _me._input[2].blur();
+                    if (_me._title[0].innerHTML === "√" && _me._title[1].innerHTML === "√" &&
+                        _me._title[2].innerHTML === "√") {
+                        _me.insert(_me._input[0].value, _me._input[2].value);
+                        // window.location.href = "login.html";
+                    }
+                }
+            }
+            this.insert = function (_user, _pwd) {
+                console.log(_user, _pwd);
+                var _ajax = new Ajax();
+                _ajax.request({
+                    url: "api/signup.php",
+                    data: {
+                        user: _user,
+                        pwd: _pwd
+                    },
+                    success: function (_data) {
+                        _data=window.eval("("+_data+")");
+                        if(_data.code===2000){
+                            alert("注册成功");
+                            window.location.href="login.html";
+                        }else{
+                            alert("注册失败，用户名已存在");
+                        }
+                    }
+                })
+            }
+        }
+
+        function main() {
+            yzm();
+            document.getElementById("mycanvas").onclick = function () {
+                yzm();
+            }
+            var _verify = new verify();
+            _verify.event();
+        }
+        window.onload = main;
+    </script>
+</head>
+
+<body>
+    <div id="top">
+        <ul>
+            <li><a href="index.html">首页</a></li>
+            <li><a href="shop.html">新品</a></li>
+            <li><a href="#">女士</a></li>
+            <li><a href="#">男士</a></li>
+            <li><a href="#">品牌</a></li>
+            <li><a href="#">走秀移动版</a></li>
+        </ul>
+        <p><a href="login.html">登录</a>|<a href="registe.html">注册</a>|</p>
+    </div>
+    <div id="main">
+        <form method="post" id="mainForm">
+            <div class="registe1">在zouxiu注册</div>
+            <div class="registe2">请填写以下信息在ZOUXIU注册。我们将保存您提供的资料以方便您网上购物。</div>
+            <p>用户名<span class="title"></span></p>
+            <input type="text" name="username" value="" id="user" class="verify">
+            <div id="content2">
+                <p>验证码<span class="title"></span></p>
+                <input id="yzm" type="text" name="verifycode" value="" class="verify">
+                <canvas id="mycanvas"></canvas>
+            </div>
+            <p>密码由6-12位英文字母、数字或符号组成<span class="title"></span></p>
+            <input type="text" name="password" value="" id="pwd" class="verify">
+            <div style="color: #afb6c0;
+            font-size: 13px;margin-top: 10px;margin-bottom: 10px;line-height: 24px;cursor: pointer;"><input
+                    type="checkbox" id="memory" style="float: left;width:20px;">我同意<a target="_blank"
+                    href="http://www.xiu.com/#/topic/pc_agreement" style="color: #333">《走秀网用户协议》</a></div>
+            <p><input type="button" name="submit" id="submit" value="注册"></p>
+        </form>
+    </div>
+    <footer>
+        <div id="one">
+            <p><img src="images/one1.png">海外直邮</p>
+            <p><img src="images/one2.png">品质保证</p>
+            <p><img src="images/one3.png">售后保障</p>
+        </div>
+        <div id="two">
+            <ul>
+                <li><img src="images/two1.png"></li>
+                <li>
+                    <a href="#">ceo邮箱</a>
+                    <a href="#">售后服务</a>
+                    <a href="#">常见问题</a>
+                    <a href="#">关税问题</a>
+                    <a href="#">物流配送</a>
+                </li>
+                <li>
+                    <p>移动走秀</p>
+                    <p><img src="images/two2.png"></p>
+                </li>
+                <li>
+                    <p>联系我们</p>
+                    <p>400-888-4499<span>(9:00-19:00)</span></p>
+                    <p>在线客服</p>
+                </li>
+            </ul>
+        </div>
+        <div id="three">
+            <p>Copyright © 2008-2018 Xiu.com深圳走秀网络科技有限公司版权所有</p>
+        </div>
+        <div id="four">
+            <p><img src="images/three.png"></p>
+        </div>
+        <div id="five"></div>
+    </footer>
+</body>
+
+</html>

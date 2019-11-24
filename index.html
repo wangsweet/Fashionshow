@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/public.css">
+    <script rel="stylesheet" src="js/Carousel.js"></script>
+    <script type="text/javascript" src="js/Cart.js"></script>
+    <script type="text/javascript" src="js/Ajax.js"></script>
+    <script type="text/javascript" src="js/lazyload.js"></script>
+    <style type="text/css">
+        #demo {
+            width: 1200px;
+            height: 610px;
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+
+        #container {
+            width: 7200px;
+            height: 610px;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+
+        #container img {
+            float: left;
+            border: 0;
+        }
+
+        #demo div:nth-child(2) {
+            position: absolute;
+            left: 500px;
+            bottom: 0px;
+            width: 150px;
+            height: 20px;
+            line-height: 20px;
+            margin-bottom: 10px;
+        }
+
+        #demo div:nth-child(2) p {
+            float: left;
+            width: 15px;
+            height: 15px;
+            margin: 5px;
+            font-size: 24px;
+            border-radius: 50%;
+            margin-top: 2px;
+            background: rgb(255, 255, 255);
+            cursor: pointer;
+        }
+
+        #delay {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        main {
+            height: auto;
+        }
+
+        #lazy {
+            width: 1200px;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+
+        #lazy>h1 {
+            text-align: center;
+            font-size: 36px;
+            line-height: 1.5;
+            padding: 10px 0px;
+            text-align: center;
+            color: rgb(0, 0, 0);
+            background: rgb(255, 255, 255);
+            font-weight: normal;
+        }
+
+        .img-area {
+            width: 390px;
+            height: 280px;
+            margin-bottom: 8px;
+            float: left;
+            margin-right: 8px;
+        }
+
+        .img-area>img {
+            width: 390px;
+            height: 280px;
+        }
+
+        #ca {
+            position: relative;
+            display: inline-block;
+            width: 250px;
+            height: 40px;
+        }
+
+        #cart {
+            position: absolute;
+            left: 0;
+            top: 30px;
+            width: 260px;
+            height: 140px;
+            background: #fff;
+            border: 1px solid #f1f1f1;
+            display: inline-block;
+            overflow: auto;
+            z-index: 999999;
+            display: none;
+        }
+
+        #cart>div {
+            padding: 10px;
+            width: 220px;
+            height: 60px;
+            position: relative;
+        }
+
+        #cart>div>a {
+            width: 200px;
+            display: inline-block;
+            padding: 0;
+            position: relative;
+        }
+
+        #cart>div>a>img {
+            width: 60px;
+            height: 65px;
+            border: 0;
+        }
+
+        #cart>div>a>span:nth-child(2) {
+            position: absolute;
+            top: 0px;
+            left: 70px;
+            font-size: 16px;
+            color: #111;
+            width: 130px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        #cart>div>a>span:nth-child(3) {
+            position: absolute;
+            top: 50px;
+            left: 70px;
+            font-size: 14px;
+            color: #111;
+        }
+
+        #cart>div>a>span:nth-child(4) {
+            position: absolute;
+            top: 25px;
+            left: 70px;
+            font-size: 12px;
+            color: rgb(202, 200, 200);
+        }
+
+        #cart>div>span {
+            position: absolute;
+            top: 36px;
+            left: 210px;
+            font-size: 14px;
+            color: #111;
+        }
+        #names{
+            display: inline-block;
+        }
+    </style>
+    <script type="text/javascript">
+        function hgroupevent() {
+            var _hgroup = document.getElementsByTagName("hgroup")[0];
+            for (let i = 0; i < 12; i++) {
+                _hgroup.children[0].children[i].children[0].onmouseover = function () {
+                    _hgroup.children[0].children[i].children[0].style.cssText =
+                        "border-left: 1px solid #d7d7d7;border-right: 1px solid #d7d7d7;"
+                    _hgroup.children[0].children[i].children[0].children[1].style.opacity = 1;
+                    _hgroup.children[0].children[i].children[0].children[0].style.display = "block";
+                }
+                _hgroup.children[0].children[i].children[0].onmouseout = function () {
+                    _hgroup.children[0].children[i].children[0].style.cssText = "border:none;"
+                    _hgroup.children[0].children[i].children[0].children[1].style.opacity = 0;
+                    _hgroup.children[0].children[i].children[0].children[0].style.display = "none";
+                }
+            }
+        }
+
+        // function isInSight(el) { //观察是否进去可视窗口
+        //     const bound = el.getBoundingClientRect(); //getBoundingClientRect用于获取元素相对与浏览器视口的位置
+        //     const clientHeight = window.innerHeight;
+        //     return bound.top <= clientHeight + 100;
+        // }
+        // let index = 0; //标记出现过的图片，在动就在基础上动。 而不是重头在读取
+        // function checkImgs() { //核实图片
+        //     const imgs = document.querySelectorAll('.tu');
+        //     for (let i = index; i < imgs.length; i++) {
+        //         if (isInSight(imgs[i])) { //如果观察到图片进去可视窗口
+        //             loadImg(imgs[i]); //就让懒加载加载出现的图片
+        //             index = i;
+        //         }
+        //     }
+        // }
+
+        // function loadImg(el) { //懒加载图
+        //     if (!el.src) { //还没有src就赋值，有了不会执行
+        //         const source = el.dataset.src;
+        //         el.src = source;
+        //     }
+        // }
+
+        // function throttle(fn, mustRun = 500) { //节流
+        //     const timer = null;
+        //     let previous = null;
+        //     return function () {
+        //         const now = new Date();
+        //         const context = this;
+        //         const args = arguments;
+        //         if (!previous) {
+        //             previous = now;
+        //         }
+        //         const remaining = now - previous; //remaining是剩余
+        //         if (mustRun && remaining >= mustRun) {
+        //             fn.apply(context, args);
+        //             previous = now;
+        //         }
+        //     }
+        // }
+
+        function obtainID(_cart) {
+            let _identifies = '';
+            _cart.take();
+            for (let i = 0; i < _cart.storage.length; i++) {
+                _identifies += _cart.storage[i].id + ",";
+            }
+            return /,$/g.test(_identifies) && _identifies.replace(/,$/g, "");
+        }
+        function iden() {
+            let _url = window.location.href;
+            let _ids1;
+            if (/\b\?\w+/g.test(_url)) {
+                _ids1 = _url.match(/\b\?\w+/g)[0].replace(/\?/g, "");
+            }
+            return _ids1;
+        }
+        let _ids=iden();
+        function ids(){
+            let _names=document.getElementById("names");
+            let _nav=document.getElementsByTagName("nav")[0].children[0];
+            let _carts=document.getElementById("ca").children[0];
+            console.log(_nav);
+            if(Boolean(_ids)){
+            _names.children[0].innerHTML="";
+            _names.children[1].innerHTML="";
+            _names.children[0].innerHTML+='欢迎您，'+_ids+'';
+            _names.children[1].innerHTML+='退出';
+            _nav.children[0].innerHTML="";
+            _nav.children[1].innerHTML="";
+            _nav.children[0].innerHTML='<a href="index.html?'+_ids+'">首页</a>';
+            _nav.children[1].innerHTML='<a href="shop.html?'+_ids+'">新品</a>';
+            _carts.innerHTML='<a href="cart.html?'+_ids+'" >'+
+                             '<img src="images/cartlogo.png">'+
+                            '<i>0</i>'+
+                            '</a>';
+            }else{
+            _names.children[0].innerHTML="";
+            _names.children[1].innerHTML="";
+            _names.children[0].innerHTML+='注册';
+            _names.children[1].innerHTML+='登录';
+            _nav.children[0].innerHTML="";
+            _nav.children[1].innerHTML="";
+            _nav.children[0].innerHTML='<a href="index.html">首页</a>';
+            _nav.children[1].innerHTML='<a href="shop.html">新品</a>';
+            _carts.innerHTML='<a href="cart.html" >'+
+                             '<img src="images/cartlogo.png">'+
+                            '<i>0</i>'+
+                            '</a>';
+            }
+        }
+        function events(_cart) {
+            let _products = document.getElementById("cart").children;
+            let _ca=document.getElementById("ca");
+            for (let i = 0; i < _products.length; i++) {
+                _products[i].children[1].onclick = function () { //删除
+                    let _identify = this.parentNode.getAttribute("identify");
+                    let _comment = this.parentNode.children[0].children[3].innerText;
+                    _cart.remove(Number(_identify), _comment);
+                    uses();
+                }
+            }
+            _ca.onmouseover=function(){
+                _ca.children[1].style.display="block";
+            }
+            _ca.onmouseout=function(){
+                _ca.children[1].style.display="none";
+            }
+
+        }
+
+        function render(_list, _cart) {
+            let _items = '';
+            _cart.take();
+            document.getElementById("cart").innerHTML = "";
+            for (let n = 0; n < _cart.storage.length; n++) {
+                for (let i = 0; i < _list.length; i++) {
+                    if (_cart.storage[n].id === _list[i].ID) {
+                        _items +=
+                            '<div identify="' + _list[i].ID + '">' +
+                            '    <a href="detail.html?id=' + _list[i].ID + '">' +
+                            '        <img src="' + _list[i].image + '" alt="">' +
+                            '        <span>' + _list[i].name + '</span>' +
+                            '        <span>￥' + _list[i].price + 'x' + _cart.storage[n].counter + '</span>' +
+                            '        <span>' + decodeURIComponent(_cart.storage[n].comment) + '</span>' +
+                            '    </a>' +
+                            '    <span>删除</span>' +
+                            '</div>';
+                        break;
+                    }
+                }
+            }
+            document.getElementById("cart").innerHTML = _items;
+            events(_cart);
+        }
+
+        function reader(_identifies, _cart) {
+            let _ajax = new Ajax();
+            _ajax.request({
+                url: "api/match.php",
+                data: {
+                    identifies: _identifies
+                },
+                success: function (_data) {
+                    _data = window.eval("(" + _data + ")");
+                    render(_data.list, _cart);
+
+                }
+            });
+        }
+        function uses(){
+            let _cart = new Summary();
+            document.getElementById("ca").children[0].children[0].children[1].innerText = Number(_cart.sum());
+            let _identifies = obtainID(_cart);
+            reader(_identifies, _cart);
+        }
+        function main() {
+            ids();
+            hgroupevent();
+            animation(1);
+            // checkImgs();
+            uses();
+            Echo.init({
+                offset: 0,
+                throttle: 0
+            });
+        }
+        window.onload=main;
+        // window.onscroll = throttle(checkImgs);
+    </script>
+</head>
+
+<body>
+    <header>
+        <div id="top1">
+            <div class="top-left">
+                <div id="names">
+                <a href="registe.html">登录</a>|
+                <a href="login.html">注册</a>|
+                </div>
+                <div id="ca">
+                <div>
+                    <a href="cart.html" >
+                        <img src="images/cartlogo.png">
+                        <i>0</i>
+                    </a>
+                </div>
+                <div id="cart"></div>   
+                </div>
+            </div>
+            <div class="top-right">
+                <input type="text" placeholder="搜索商品"><input type="submit" value="">
+            </div>
+        </div>
+    </header>
+    <nav>
+        <ul class="nav">
+            <li><a href="index.html">首页</a></li>
+            <li><a href="shop.html">新品</a></li>
+            <li><a href="#">女士</a></li>
+            <li><a href="#">男士</a></li>
+            <li><a href="#">品牌</a></li>
+            <li><a href="#">走秀移动版</a></li>
+        </ul>
+    </nav>
+    <hgroup>
+        <div class="hgroup-list">
+            <div class="list1">
+                <div>女装
+                    <div class="list1-1">
+                        <ul>
+                            <li>上装</li>
+                            <li><a href="#">T恤</a>
+                                <a href="#">吊带/背心</a>
+                                <a href="#">雪纺衫</a>
+                                <a href="#">上衣</a>
+                                <a href="#">露肩衫</a>
+                                <a href="#">POLO衫</a>
+                                <a href="#">卫衣</a>
+                                <a href="#">衬衫</a>
+                                <a href="#">毛衣/针织衫</a>
+                                <a href="#">羊绒衫</a>
+                                <a href="#">皮衣</a>
+                                <a href="#">皮草</a>
+                                <a href="#">大衣</a>
+                                <a href="#">风衣</a>
+                                <a href="#">羽绒服</a>
+                                <a href="#">棉服</a>
+                                <a href="#">西装</a>
+                                <a href="#">马甲</a>
+                                <a href="#">牛仔外套</a>
+                                <a href="#">棒球夹克</a>
+                                <a href="#">外套</a>
+                            </li>
+                            <li>内衣/袜子</li>
+                            <li><a href="#">文胸</a>
+                                <a href="#">内衣套装</a>
+                                <a href="#">打底内衣</a>
+                                <a href="#">内裤</a>
+                                <a href="#">塑身内衣</a>
+                                <a href="#">袜子</a>
+                                <a href="#">睡衣/居家服</a>
+                            </li>
+                            <li>裙装</li>
+                            <li><a href="#">半身裙</a>
+                                <a href="#">针织连衣裙</a>
+                                <a href="#">沙滩裙</a>
+                                <a href="#">连衣裙</a>
+                            </li>
+                            <li>套装</li>
+                            <li><a href="#">正装套装</a>
+                                <a href="#">休闲套装</a>
+                            </li>
+                            <li>下装</li>
+                            <li><a href="#">牛仔裤</a>
+                                <a href="#">短裤</a>
+                                <a href="#">正装裤</a>
+                                <a href="#">喇叭裤</a>
+                                <a href="#">阔腿裤</a>
+                                <a href="#">休闲裤</a>
+                                <a href="#">针织运动裤</a>
+                                <a href="#">皮裤</a>
+                                <a href="#">打底裤</a>
+                                <a href="#">连身裤</a>
+                            </li>
+                            <li>运动户外</li>
+                            <li><a href="#">运动上装</a>
+                                <a href="#">运动下装</a>
+                                <a href="#">运动套装</a>
+                                <a href="#">瑜伽服</a>
+                                <a href="#">户外装/冲锋衣</a>
+                                <a href="#">运动内衣</a>
+                                <a href="#">泳衣</a>
+                                <a href="#">沙滩装</a>
+                                <a href="#">泳帽/泳镜</a>
+                            </li>
+                            <li>情侣/亲子装</li>
+                            <li><a href="#">情侣T恤</a>
+                                <a href="#">情侣衬衫</a>
+                                <a href="#">情侣外套</a>
+                                <a href="#">情侣套装</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+            </div>
+            <div class="list1">
+                <div>男装<div class="list1-1">
+                        <ul>
+                            <li>上装</li>
+                            <li><a href="#">T恤</a>
+                                <a href="#">背心</a>
+                                <a href="#">POLO衫</a>
+                                <a href="#">卫衣</a>
+                                <a href="#">衬衫</a>
+                                <a href="#">夹克</a>
+                                <a href="#">棒球夹克</a>
+                                <a href="#">外套</a>
+                                <a href="#">牛仔外套</a>
+                                <a href="#">皮衣</a>
+                                <a href="#">正装西服</a>
+                                <a href="#">休闲西服</a>
+                                <a href="#">风衣</a>
+                                <a href="#">大衣</a>
+                                <a href="#">马甲</a>
+                                <a href="#">毛衣/针织衫</a>
+                                <a href="#">羊绒衫</a>
+                                <a href="#">羽绒服</a>
+                                <a href="#">棉服</a>
+                            </li>
+                            <li>下装</li>
+                            <li><a href="#">短裤</a>
+                                <a href="#">沙滩裤</a>
+                                <a href="#">牛仔裤</a>
+                                <a href="#">休闲裤</a>
+                                <a href="#">针织运动裤</a>
+                                <a href="#">西裤</a>
+                                <a href="#">皮裤</a>
+                            </li>
+                            <li>套装</li>
+                            <li><a href="#">正装套装</a>
+                                <a href="#">休闲套装</a>
+                            </li>
+                            <li>运动户外</li>
+                            <li><a href="#">运动上装</a>
+                                <a href="#">运动下装</a>
+                                <a href="#">运动套装</a>
+                                <a href="#">户外装/冲锋衣</a>
+                                <a href="#">泳裤</a>
+                                <a href="#">沙滩装</a>
+                                <a href="#">泳帽/泳镜</a>
+                            </li>
+                            <li>内衣/袜子</li>
+                            <li><a href="#">睡衣/家居服</a>
+                                <a href="#">内裤</a>
+                                <a href="#">袜子</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+            </div>
+            <div class="list1">
+                <div>女包<div class="list1-1">
+                        <ul>
+                            <li>上装</li>
+                            <li><a href="#">T恤</a>
+                                <a href="#">吊带/背心</a>
+                                <a href="#">雪纺衫</a>
+                                <a href="#">上衣</a>
+                                <a href="#">露肩衫</a>
+                                <a href="#">POLO衫</a>
+                                <a href="#">卫衣</a>
+                                <a href="#">衬衫</a>
+                                <a href="#">毛衣/针织衫</a>
+                                <a href="#">羊绒衫</a>
+                                <a href="#">皮衣</a>
+                                <a href="#">皮草</a>
+                                <a href="#">大衣</a>
+                                <a href="#">风衣</a>
+                                <a href="#">羽绒服</a>
+                                <a href="#">棉服</a>
+                                <a href="#">西装</a>
+                                <a href="#">马甲</a>
+                                <a href="#">牛仔外套</a>
+                                <a href="#">棒球夹克</a>
+                                <a href="#">外套</a>
+                            </li>
+                            <li>内衣/袜子</li>
+                            <li><a href="#">文胸</a>
+                                <a href="#">内衣套装</a>
+                                <a href="#">打底内衣</a>
+                                <a href="#">内裤</a>
+                                <a href="#">塑身内衣</a>
+                                <a href="#">袜子</a>
+                                <a href="#">睡衣/居家服</a>
+                            </li>
+                            <li>裙装</li>
+                            <li><a href="#">半身裙</a>
+                                <a href="#">针织连衣裙</a>
+                                <a href="#">沙滩裙</a>
+                                <a href="#">连衣裙</a>
+                            </li>
+                            <li>套装</li>
+                            <li><a href="#">正装套装</a>
+                                <a href="#">休闲套装</a>
+                            </li>
+                            <li>下装</li>
+                            <li><a href="#">牛仔裤</a>
+                                <a href="#">短裤</a>
+                                <a href="#">正装裤</a>
+                                <a href="#">喇叭裤</a>
+                                <a href="#">阔腿裤</a>
+                                <a href="#">休闲裤</a>
+                                <a href="#">针织运动裤</a>
+                                <a href="#">皮裤</a>
+                                <a href="#">打底裤</a>
+                                <a href="#">连身裤</a>
+                            </li>
+                            <li>运动户外</li>
+                            <li><a href="#">运动上装</a>
+                                <a href="#">运动下装</a>
+                                <a href="#">运动套装</a>
+                                <a href="#">瑜伽服</a>
+                                <a href="#">户外装/冲锋衣</a>
+                                <a href="#">运动内衣</a>
+                                <a href="#">泳衣</a>
+                                <a href="#">沙滩装</a>
+                                <a href="#">泳帽泳镜</a>
+                            </li>
+                            <li>情侣/亲子装</li>
+                            <li><a href="#">情侣T恤</a>
+                                <a href="#">情侣衬衫</a>
+                                <a href="#">情侣外套</a>
+                                <a href="#">情侣套装</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+            </div>
+            <div class="list1">
+                <div>男包<div class="list1-1">
+                        <ul>
+                            <li>上装</li>
+                            <li><a href="#">T恤</a>
+                                <a href="#">吊带/背心</a>
+                                <a href="#">雪纺衫</a>
+                                <a href="#">上衣</a>
+                                <a href="#">露肩衫</a>
+                                <a href="#">POLO衫</a>
+                                <a href="#">卫衣</a>
+                                <a href="#">衬衫</a>
+                                <a href="#">毛衣/针织衫</a>
+                                <a href="#">羊绒衫</a>
+                                <a href="#">皮衣</a>
+                                <a href="#">皮草</a>
+                                <a href="#">大衣</a>
+                                <a href="#">风衣</a>
+                                <a href="#">羽绒服</a>
+                                <a href="#">棉服</a>
+                                <a href="#">西装</a>
+                                <a href="#">马甲</a>
+                                <a href="#">牛仔外套</a>
+                                <a href="#">棒球夹克</a>
+                                <a href="#">外套</a>
+                            </li>
+                            <li>内衣/袜子</li>
+                            <li><a href="#">文胸</a>
+                                <a href="#">内衣套装</a>
+                                <a href="#">打底内衣</a>
+                                <a href="#">内裤</a>
+                                <a href="#">塑身内衣</a>
+                                <a href="#">袜子</a>
+                                <a href="#">睡衣/居家服</a>
+                            </li>
+                            <li>裙装</li>
+                            <li><a href="#">半身裙</a>
+                                <a href="#">针织连衣裙</a>
+                                <a href="#">沙滩裙</a>
+                                <a href="#">连衣裙</a>
+                            </li>
+                            <li>套装</li>
+                            <li><a href="#">正装套装</a>
+                                <a href="#">休闲套装</a>
+                            </li>
+                            <li>下装</li>
+                            <li><a href="#">牛仔裤</a>
+                                <a href="#">短裤</a>
+                                <a href="#">正装裤</a>
+                                <a href="#">喇叭裤</a>
+                                <a href="#">阔腿裤</a>
+                                <a href="#">休闲裤</a>
+                                <a href="#">针织运动裤</a>
+                                <a href="#">皮裤</a>
+                                <a href="#">打底裤</a>
+                                <a href="#">连身裤</a>
+                            </li>
+                            <li>运动户外</li>
+                            <li><a href="#">运动上装</a>
+                                <a href="#">运动下装</a>
+                                <a href="#">运动套装</a>
+                                <a href="#">瑜伽服</a>
+                                <a href="#">户外装/冲锋衣</a>
+                                <a href="#">运动内衣</a>
+                                <a href="#">泳衣</a>
+                                <a href="#">沙滩装</a>
+                                <a href="#">泳帽泳镜</a>
+                            </li>
+                            <li>情侣/亲子装</li>
+                            <li><a href="#">情侣T恤</a>
+                                <a href="#">情侣衬衫</a>
+                                <a href="#">情侣外套</a>
+                                <a href="#">情侣套装</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+
+            </div>
+            <div class="list1">
+                <div>女鞋<div class="list1-1">
+                        <ul>
+                            <li>上装</li>
+                            <li><a href="#">T恤</a>
+                                <a href="#">吊带/背心</a>
+                                <a href="#">雪纺衫</a>
+                                <a href="#">上衣</a>
+                                <a href="#">露肩衫</a>
+                                <a href="#">POLO衫</a>
+                                <a href="#">卫衣</a>
+                                <a href="#">衬衫</a>
+                                <a href="#">毛衣/针织衫</a>
+                                <a href="#">羊绒衫</a>
+                                <a href="#">皮衣</a>
+                                <a href="#">皮草</a>
+                                <a href="#">大衣</a>
+                                <a href="#">风衣</a>
+                                <a href="#">羽绒服</a>
+                                <a href="#">棉服</a>
+                                <a href="#">西装</a>
+                                <a href="#">马甲</a>
+                                <a href="#">牛仔外套</a>
+                                <a href="#">棒球夹克</a>
+                                <a href="#">外套</a>
+                            </li>
+                            <li>内衣/袜子</li>
+                            <li><a href="#">文胸</a>
+                                <a href="#">内衣套装</a>
+                                <a href="#">打底内衣</a>
+                                <a href="#">内裤</a>
+                                <a href="#">塑身内衣</a>
+                                <a href="#">袜子</a>
+                                <a href="#">睡衣/居家服</a>
+                            </li>
+                            <li>裙装</li>
+                            <li><a href="#">半身裙</a>
+                                <a href="#">针织连衣裙</a>
+                                <a href="#">沙滩裙</a>
+                                <a href="#">连衣裙</a>
+                            </li>
+                            <li>套装</li>
+                            <li><a href="#">正装套装</a>
+                                <a href="#">休闲套装</a>
+                            </li>
+                            <li>下装</li>
+                            <li><a href="#">牛仔裤</a>
+                                <a href="#">短裤</a>
+                                <a href="#">正装裤</a>
+                                <a href="#">喇叭裤</a>
+                                <a href="#">阔腿裤</a>
+                                <a href="#">休闲裤</a>
+                                <a href="#">针织运动裤</a>
+                                <a href="#">皮裤</a>
+                                <a href="#">打底裤</a>
+                                <a href="#">连身裤</a>
+                            </li>
+                            <li>运动户外</li>
+                            <li><a href="#">运动上装</a>
+                                <a href="#">运动下装</a>
+                                <a href="#">运动套装</a>
+                                <a href="#">瑜伽服</a>
+                                <a href="#">户外装/冲锋衣</a>
+                                <a href="#">运动内衣</a>
+                                <a href="#">泳衣</a>
+                                <a href="#">沙滩装</a>
+                                <a href="#">泳帽泳镜</a>
+                            </li>
+                            <li>情侣/亲子装</li>
+                            <li><a href="#">情侣T恤</a>
+                                <a href="#">情侣衬衫</a>
+                                <a href="#">情侣外套</a>
+                                <a href="#">情侣套装</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+
+            </div>
+            <div class="list1">
+                <div>男鞋<div class="list1-1">
+                        <ul>
+                            <li>上装</li>
+                            <li><a href="#">T恤</a>
+                                <a href="#">吊带/背心</a>
+                                <a href="#">雪纺衫</a>
+                                <a href="#">上衣</a>
+                                <a href="#">露肩衫</a>
+                                <a href="#">POLO衫</a>
+                                <a href="#">卫衣</a>
+                                <a href="#">衬衫</a>
+                                <a href="#">毛衣/针织衫</a>
+                                <a href="#">羊绒衫</a>
+                                <a href="#">皮衣</a>
+                                <a href="#">皮草</a>
+                                <a href="#">大衣</a>
+                                <a href="#">风衣</a>
+                                <a href="#">羽绒服</a>
+                                <a href="#">棉服</a>
+                                <a href="#">西装</a>
+                                <a href="#">马甲</a>
+                                <a href="#">牛仔外套</a>
+                                <a href="#">棒球夹克</a>
+                                <a href="#">外套</a>
+                            </li>
+                            <li>内衣/袜子</li>
+                            <li><a href="#">文胸</a>
+                                <a href="#">内衣套装</a>
+                                <a href="#">打底内衣</a>
+                                <a href="#">内裤</a>
+                                <a href="#">塑身内衣</a>
+                                <a href="#">袜子</a>
+                                <a href="#">睡衣/居家服</a>
+                            </li>
+                            <li>裙装</li>
+                            <li><a href="#">半身裙</a>
+                                <a href="#">针织连衣裙</a>
+                                <a href="#">沙滩裙</a>
+                                <a href="#">连衣裙</a>
+                            </li>
+                            <li>套装</li>
+                            <li><a href="#">正装套装</a>
+                                <a href="#">休闲套装</a>
+                            </li>
+                            <li>下装</li>
+                            <li><a href="#">牛仔裤</a>
+                                <a href="#">短裤</a>
+                                <a href="#">正装裤</a>
+                                <a href="#">喇叭裤</a>
+                                <a href="#">阔腿裤</a>
+                                <a href="#">休闲裤</a>
+                                <a href="#">针织运动裤</a>
+                                <a href="#">皮裤</a>
+                                <a href="#">打底裤</a>
+                                <a href="#">连身裤</a>
+                            </li>
+                            <li>运动户外</li>
+                            <li><a href="#">运动上装</a>
+                                <a href="#">运动下装</a>
+                                <a href="#">运动套装</a>
+                                <a href="#">瑜伽服</a>
+                                <a href="#">户外装/冲锋衣</a>
+                                <a href="#">运动内衣</a>
+                                <a href="#">泳衣</a>
+                                <a href="#">沙滩装</a>
+                                <a href="#">泳帽泳镜</a>
+                            </li>
+                            <li>情侣/亲子装</li>
+                            <li><a href="#">情侣T恤</a>
+                                <a href="#">情侣衬衫</a>
+                                <a href="#">情侣外套</a>
+                                <a href="#">情侣套装</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+
+            </div>
+            <div class="list1">
+                <div>妆品<div class="list1-1">
+                        <ul>
+                            <li>上装</li>
+                            <li><a href="#">T恤</a>
+                                <a href="#">吊带/背心</a>
+                                <a href="#">雪纺衫</a>
+                                <a href="#">上衣</a>
+                                <a href="#">露肩衫</a>
+                                <a href="#">POLO衫</a>
+                                <a href="#">卫衣</a>
+                                <a href="#">衬衫</a>
+                                <a href="#">毛衣/针织衫</a>
+                                <a href="#">羊绒衫</a>
+                                <a href="#">皮衣</a>
+                                <a href="#">皮草</a>
+                                <a href="#">大衣</a>
+                                <a href="#">风衣</a>
+                                <a href="#">羽绒服</a>
+                                <a href="#">棉服</a>
+                                <a href="#">西装</a>
+                                <a href="#">马甲</a>
+                                <a href="#">牛仔外套</a>
+                                <a href="#">棒球夹克</a>
+                                <a href="#">外套</a>
+                            </li>
+                            <li>内衣/袜子</li>
+                            <li><a href="#">文胸</a>
+                                <a href="#">内衣套装</a>
+                                <a href="#">打底内衣</a>
+                                <a href="#">内裤</a>
+                                <a href="#">塑身内衣</a>
+                                <a href="#">袜子</a>
+                                <a href="#">睡衣/居家服</a>
+                            </li>
+                            <li>裙装</li>
+                            <li><a href="#">半身裙</a>
+                                <a href="#">针织连衣裙</a>
+                                <a href="#">沙滩裙</a>
+                                <a href="#">连衣裙</a>
+                            </li>
+                            <li>套装</li>
+                            <li><a href="#">正装套装</a>
+                                <a href="#">休闲套装</a>
+                            </li>
+                            <li>下装</li>
+                            <li><a href="#">牛仔裤</a>
+                                <a href="#">短裤</a>
+                                <a href="#">正装裤</a>
+                                <a href="#">喇叭裤</a>
+                                <a href="#">阔腿裤</a>
+                                <a href="#">休闲裤</a>
+                                <a href="#">针织运动裤</a>
+                                <a href="#">皮裤</a>
+                                <a href="#">打底裤</a>
+                                <a href="#">连身裤</a>
+                            </li>
+                            <li>运动户外</li>
+                            <li><a href="#">运动上装</a>
+                                <a href="#">运动下装</a>
+                                <a href="#">运动套装</a>
+                                <a href="#">瑜伽服</a>
+                                <a href="#">户外装/冲锋衣</a>
+                                <a href="#">运动内衣</a>
+                                <a href="#">泳衣</a>
+                                <a href="#">沙滩装</a>
+                                <a href="#">泳帽泳镜</a>
+                            </li>
+                            <li>情侣/亲子装</li>
+                            <li><a href="#">情侣T恤</a>
+                                <a href="#">情侣衬衫</a>
+                                <a href="#">情侣外套</a>
+                                <a href="#">情侣套装</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+
+            </div>
+            <div class="list1">
+                <div>女士配饰 <div class="list1-1">
+                        <ul>
+                            <li>上装</li>
+                            <li><a href="#">T恤</a>
+                                <a href="#">吊带/背心</a>
+                                <a href="#">雪纺衫</a>
+                                <a href="#">上衣</a>
+                                <a href="#">露肩衫</a>
+                                <a href="#">POLO衫</a>
+                                <a href="#">卫衣</a>
+                                <a href="#">衬衫</a>
+                                <a href="#">毛衣/针织衫</a>
+                                <a href="#">羊绒衫</a>
+                                <a href="#">皮衣</a>
+                                <a href="#">皮草</a>
+                                <a href="#">大衣</a>
+                                <a href="#">风衣</a>
+                                <a href="#">羽绒服</a>
+                                <a href="#">棉服</a>
+                                <a href="#">西装</a>
+                                <a href="#">马甲</a>
+                                <a href="#">牛仔外套</a>
+                                <a href="#">棒球夹克</a>
+                                <a href="#">外套</a>
+                            </li>
+                            <li>内衣/袜子</li>
+                            <li><a href="#">文胸</a>
+                                <a href="#">内衣套装</a>
+                                <a href="#">打底内衣</a>
+                                <a href="#">内裤</a>
+                                <a href="#">塑身内衣</a>
+                                <a href="#">袜子</a>
+                                <a href="#">睡衣/居家服</a>
+                            </li>
+                            <li>裙装</li>
+                            <li><a href="#">半身裙</a>
+                                <a href="#">针织连衣裙</a>
+                                <a href="#">沙滩裙</a>
+                                <a href="#">连衣裙</a>
+                            </li>
+                            <li>套装</li>
+                            <li><a href="#">正装套装</a>
+                                <a href="#">休闲套装</a>
+                            </li>
+                            <li>下装</li>
+                            <li><a href="#">牛仔裤</a>
+                                <a href="#">短裤</a>
+                                <a href="#">正装裤</a>
+                                <a href="#">喇叭裤</a>
+                                <a href="#">阔腿裤</a>
+                                <a href="#">休闲裤</a>
+                                <a href="#">针织运动裤</a>
+                                <a href="#">皮裤</a>
+                                <a href="#">打底裤</a>
+                                <a href="#">连身裤</a>
+                            </li>
+                            <li>运动户外</li>
+                            <li><a href="#">运动上装</a>
+                                <a href="#">运动下装</a>
+                                <a href="#">运动套装</a>
+                                <a href="#">瑜伽服</a>
+                                <a href="#">户外装/冲锋衣</a>
+                                <a href="#">运动内衣</a>
+                                <a href="#">泳衣</a>
+                                <a href="#">沙滩装</a>
+                                <a href="#">泳帽泳镜</a>
+                            </li>
+                            <li>情侣/亲子装</li>
+                            <li><a href="#">情侣T恤</a>
+                                <a href="#">情侣衬衫</a>
+                                <a href="#">情侣外套</a>
+                                <a href="#">情侣套装</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+
+            </div>
+            <div class="list1">
+                <div>男士配饰<div class="list1-1">
+                        <ul>
+                            <li>上装</li>
+                            <li><a href="#">T恤</a>
+                                <a href="#">吊带/背心</a>
+                                <a href="#">雪纺衫</a>
+                                <a href="#">上衣</a>
+                                <a href="#">露肩衫</a>
+                                <a href="#">POLO衫</a>
+                                <a href="#">卫衣</a>
+                                <a href="#">衬衫</a>
+                                <a href="#">毛衣/针织衫</a>
+                                <a href="#">羊绒衫</a>
+                                <a href="#">皮衣</a>
+                                <a href="#">皮草</a>
+                                <a href="#">大衣</a>
+                                <a href="#">风衣</a>
+                                <a href="#">羽绒服</a>
+                                <a href="#">棉服</a>
+                                <a href="#">西装</a>
+                                <a href="#">马甲</a>
+                                <a href="#">牛仔外套</a>
+                                <a href="#">棒球夹克</a>
+                                <a href="#">外套</a>
+                            </li>
+                            <li>内衣/袜子</li>
+                            <li><a href="#">文胸</a>
+                                <a href="#">内衣套装</a>
+                                <a href="#">打底内衣</a>
+                                <a href="#">内裤</a>
+                                <a href="#">塑身内衣</a>
+                                <a href="#">袜子</a>
+                                <a href="#">睡衣/居家服</a>
+                            </li>
+                            <li>裙装</li>
+                            <li><a href="#">半身裙</a>
+                                <a href="#">针织连衣裙</a>
+                                <a href="#">沙滩裙</a>
+                                <a href="#">连衣裙</a>
+                            </li>
+                            <li>套装</li>
+                            <li><a href="#">正装套装</a>
+                                <a href="#">休闲套装</a>
+                            </li>
+                            <li>下装</li>
+                            <li><a href="#">牛仔裤</a>
+                                <a href="#">短裤</a>
+                                <a href="#">正装裤</a>
+                                <a href="#">喇叭裤</a>
+                                <a href="#">阔腿裤</a>
+                                <a href="#">休闲裤</a>
+                                <a href="#">针织运动裤</a>
+                                <a href="#">皮裤</a>
+                                <a href="#">打底裤</a>
+                                <a href="#">连身裤</a>
+                            </li>
+                            <li>运动户外</li>
+                            <li><a href="#">运动上装</a>
+                                <a href="#">运动下装</a>
+                                <a href="#">运动套装</a>
+                                <a href="#">瑜伽服</a>
+                                <a href="#">户外装/冲锋衣</a>
+                                <a href="#">运动内衣</a>
+                                <a href="#">泳衣</a>
+                                <a href="#">沙滩装</a>
+                                <a href="#">泳帽泳镜</a>
+                            </li>
+                            <li>情侣/亲子装</li>
+                            <li><a href="#">情侣T恤</a>
+                                <a href="#">情侣衬衫</a>
+                                <a href="#">情侣外套</a>
+                                <a href="#">情侣套装</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+
+            </div>
+            <div class="list1">
+                <div>腕表<div class="list1-1">
+                        <ul>
+                            <li>上装</li>
+                            <li><a href="#">T恤</a>
+                                <a href="#">吊带/背心</a>
+                                <a href="#">雪纺衫</a>
+                                <a href="#">上衣</a>
+                                <a href="#">露肩衫</a>
+                                <a href="#">POLO衫</a>
+                                <a href="#">卫衣</a>
+                                <a href="#">衬衫</a>
+                                <a href="#">毛衣/针织衫</a>
+                                <a href="#">羊绒衫</a>
+                                <a href="#">皮衣</a>
+                                <a href="#">皮草</a>
+                                <a href="#">大衣</a>
+                                <a href="#">风衣</a>
+                                <a href="#">羽绒服</a>
+                                <a href="#">棉服</a>
+                                <a href="#">西装</a>
+                                <a href="#">马甲</a>
+                                <a href="#">牛仔外套</a>
+                                <a href="#">棒球夹克</a>
+                                <a href="#">外套</a>
+                            </li>
+                            <li>内衣/袜子</li>
+                            <li><a href="#">文胸</a>
+                                <a href="#">内衣套装</a>
+                                <a href="#">打底内衣</a>
+                                <a href="#">内裤</a>
+                                <a href="#">塑身内衣</a>
+                                <a href="#">袜子</a>
+                                <a href="#">睡衣/居家服</a>
+                            </li>
+                            <li>裙装</li>
+                            <li><a href="#">半身裙</a>
+                                <a href="#">针织连衣裙</a>
+                                <a href="#">沙滩裙</a>
+                                <a href="#">连衣裙</a>
+                            </li>
+                            <li>套装</li>
+                            <li><a href="#">正装套装</a>
+                                <a href="#">休闲套装</a>
+                            </li>
+                            <li>下装</li>
+                            <li><a href="#">牛仔裤</a>
+                                <a href="#">短裤</a>
+                                <a href="#">正装裤</a>
+                                <a href="#">喇叭裤</a>
+                                <a href="#">阔腿裤</a>
+                                <a href="#">休闲裤</a>
+                                <a href="#">针织运动裤</a>
+                                <a href="#">皮裤</a>
+                                <a href="#">打底裤</a>
+                                <a href="#">连身裤</a>
+                            </li>
+                            <li>运动户外</li>
+                            <li><a href="#">运动上装</a>
+                                <a href="#">运动下装</a>
+                                <a href="#">运动套装</a>
+                                <a href="#">瑜伽服</a>
+                                <a href="#">户外装/冲锋衣</a>
+                                <a href="#">运动内衣</a>
+                                <a href="#">泳衣</a>
+                                <a href="#">沙滩装</a>
+                                <a href="#">泳帽泳镜</a>
+                            </li>
+                            <li>情侣/亲子装</li>
+                            <li><a href="#">情侣T恤</a>
+                                <a href="#">情侣衬衫</a>
+                                <a href="#">情侣外套</a>
+                                <a href="#">情侣套装</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+
+            </div>
+            <div class="list1">
+                <div>生活<div class="list1-1">
+                        <ul>
+                            <li>上装</li>
+                            <li><a href="#">T恤</a>
+                                <a href="#">吊带/背心</a>
+                                <a href="#">雪纺衫</a>
+                                <a href="#">上衣</a>
+                                <a href="#">露肩衫</a>
+                                <a href="#">POLO衫</a>
+                                <a href="#">卫衣</a>
+                                <a href="#">衬衫</a>
+                                <a href="#">毛衣/针织衫</a>
+                                <a href="#">羊绒衫</a>
+                                <a href="#">皮衣</a>
+                                <a href="#">皮草</a>
+                                <a href="#">大衣</a>
+                                <a href="#">风衣</a>
+                                <a href="#">羽绒服</a>
+                                <a href="#">棉服</a>
+                                <a href="#">西装</a>
+                                <a href="#">马甲</a>
+                                <a href="#">牛仔外套</a>
+                                <a href="#">棒球夹克</a>
+                                <a href="#">外套</a>
+                            </li>
+                            <li>内衣/袜子</li>
+                            <li><a href="#">文胸</a>
+                                <a href="#">内衣套装</a>
+                                <a href="#">打底内衣</a>
+                                <a href="#">内裤</a>
+                                <a href="#">塑身内衣</a>
+                                <a href="#">袜子</a>
+                                <a href="#">睡衣/居家服</a>
+                            </li>
+                            <li>裙装</li>
+                            <li><a href="#">半身裙</a>
+                                <a href="#">针织连衣裙</a>
+                                <a href="#">沙滩裙</a>
+                                <a href="#">连衣裙</a>
+                            </li>
+                            <li>套装</li>
+                            <li><a href="#">正装套装</a>
+                                <a href="#">休闲套装</a>
+                            </li>
+                            <li>下装</li>
+                            <li><a href="#">牛仔裤</a>
+                                <a href="#">短裤</a>
+                                <a href="#">正装裤</a>
+                                <a href="#">喇叭裤</a>
+                                <a href="#">阔腿裤</a>
+                                <a href="#">休闲裤</a>
+                                <a href="#">针织运动裤</a>
+                                <a href="#">皮裤</a>
+                                <a href="#">打底裤</a>
+                                <a href="#">连身裤</a>
+                            </li>
+                            <li>运动户外</li>
+                            <li><a href="#">运动上装</a>
+                                <a href="#">运动下装</a>
+                                <a href="#">运动套装</a>
+                                <a href="#">瑜伽服</a>
+                                <a href="#">户外装/冲锋衣</a>
+                                <a href="#">运动内衣</a>
+                                <a href="#">泳衣</a>
+                                <a href="#">沙滩装</a>
+                                <a href="#">泳帽泳镜</a>
+                            </li>
+                            <li>情侣/亲子装</li>
+                            <li><a href="#">情侣T恤</a>
+                                <a href="#">情侣衬衫</a>
+                                <a href="#">情侣外套</a>
+                                <a href="#">情侣套装</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+
+            </div>
+            <div class="list1">
+                <div>婴童<div class="list1-1">
+                        <ul>
+                            <li>上装</li>
+                            <li><a href="#">T恤</a>
+                                <a href="#">吊带/背心</a>
+                                <a href="#">雪纺衫</a>
+                                <a href="#">上衣</a>
+                                <a href="#">露肩衫</a>
+                                <a href="#">POLO衫</a>
+                                <a href="#">卫衣</a>
+                                <a href="#">衬衫</a>
+                                <a href="#">毛衣/针织衫</a>
+                                <a href="#">羊绒衫</a>
+                                <a href="#">皮衣</a>
+                                <a href="#">皮草</a>
+                                <a href="#">大衣</a>
+                                <a href="#">风衣</a>
+                                <a href="#">羽绒服</a>
+                                <a href="#">棉服</a>
+                                <a href="#">西装</a>
+                                <a href="#">马甲</a>
+                                <a href="#">牛仔外套</a>
+                                <a href="#">棒球夹克</a>
+                                <a href="#">外套</a>
+                            </li>
+                            <li>内衣/袜子</li>
+                            <li><a href="#">文胸</a>
+                                <a href="#">内衣套装</a>
+                                <a href="#">打底内衣</a>
+                                <a href="#">内裤</a>
+                                <a href="#">塑身内衣</a>
+                                <a href="#">袜子</a>
+                                <a href="#">睡衣/居家服</a>
+                            </li>
+                            <li>裙装</li>
+                            <li><a href="#">半身裙</a>
+                                <a href="#">针织连衣裙</a>
+                                <a href="#">沙滩裙</a>
+                                <a href="#">连衣裙</a>
+                            </li>
+                            <li>套装</li>
+                            <li><a href="#">正装套装</a>
+                                <a href="#">休闲套装</a>
+                            </li>
+                            <li>下装</li>
+                            <li><a href="#">牛仔裤</a>
+                                <a href="#">短裤</a>
+                                <a href="#">正装裤</a>
+                                <a href="#">喇叭裤</a>
+                                <a href="#">阔腿裤</a>
+                                <a href="#">休闲裤</a>
+                                <a href="#">针织运动裤</a>
+                                <a href="#">皮裤</a>
+                                <a href="#">打底裤</a>
+                                <a href="#">连身裤</a>
+                            </li>
+                            <li>运动户外</li>
+                            <li><a href="#">运动上装</a>
+                                <a href="#">运动下装</a>
+                                <a href="#">运动套装</a>
+                                <a href="#">瑜伽服</a>
+                                <a href="#">户外装/冲锋衣</a>
+                                <a href="#">运动内衣</a>
+                                <a href="#">泳衣</a>
+                                <a href="#">沙滩装</a>
+                                <a href="#">泳帽泳镜</a>
+                            </li>
+                            <li>情侣/亲子装</li>
+                            <li><a href="#">情侣T恤</a>
+                                <a href="#">情侣衬衫</a>
+                                <a href="#">情侣外套</a>
+                                <a href="#">情侣套装</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+
+            </div>
+        </div>
+    </hgroup>
+    <div id="demo">
+        <div id="container">
+            <img src="images/carousel01.jpg" alt="">
+            <img src="images/carousel02.jpg" alt="">
+            <img src="images/carousel03.jpg" alt="">
+            <img src="images/carousel04.jpg" alt="">
+            <img src="images/carousel05.jpg" alt="">
+            <img src="images/carousel06.jpg" alt="">
+        </div>
+        <div id="de">
+            <p></p>
+            <p></p>
+            <p></p>
+            <p></p>
+            <p></p>
+            <p></p>
+        </div>
+    </div>
+    <div id="delay">
+        <img src="images/delay.jpg">
+    </div>
+    <main>
+        <div id="lazy">
+            <h1>尖货推荐</h1>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop1.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop2.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop3.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop4.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop5.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop6.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop7.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop8.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop9.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop10.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop11.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop12.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop13.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop14.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop15.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop16.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop17.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop18.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop19.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop20.jpg">
+            </div>
+            <div class="img-area">
+                <img class="tu" alt="loading" src="images/logo.jpg" data-src="images/shop21.jpg">
+            </div>
+            <h1>特惠推荐</h1>
+            <div class="img-area" style="width:585px;height:290px;">
+                <img class="tu" style="width:585px;height:290px;" alt="loading" src="images/logo.jpg" data-src="images/pretty1.jpg">
+            </div>
+            <div class="img-area" style="width:585px;height:290px;">
+                <img class="tu" style="width:585px;height:290px;" alt="loading" src="images/logo.jpg" data-src="images/pretty2.jpg">
+            </div>
+        </div>
+    </main>
+    <footer>
+        <div id="one">
+            <p><img src="images/one1.png">海外直邮</p>
+            <p><img src="images/one2.png">品质保证</p>
+            <p><img src="images/one3.png">售后保障</p>
+        </div>
+        <div id="two">
+            <ul>
+                <li><img src="images/two1.png"></li>
+                <li>
+                    <a href="#">ceo邮箱</a>
+                    <a href="#">售后服务</a>
+                    <a href="#">常见问题</a>
+                    <a href="#">关税问题</a>
+                    <a href="#">物流配送</a>
+                </li>
+                <li>
+                    <p>移动走秀</p>
+                    <p><img src="images/two2.png"></p>
+                </li>
+                <li>
+                    <p>联系我们</p>
+                    <p>400-888-4499<span>(9:00-19:00)</span></p>
+                    <p>在线客服</p>
+                </li>
+            </ul>
+        </div>
+        <div id="three">
+            <p>Copyright © 2008-2018 Xiu.com深圳走秀网络科技有限公司版权所有</p>
+        </div>
+        <div id="four">
+            <p><img src="images/three.png"></p>
+        </div>
+        <div id="five"></div>
+    </footer>
+</body>
+
+</html>
